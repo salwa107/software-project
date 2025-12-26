@@ -1,0 +1,371 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>QuickDeliver - نظام التوصيل السريع</title>
+    <!-- Link to our CSS file for styling -->
+    <link rel="stylesheet" href="style.css">
+    <!-- Google Fonts for nice typography -->
+    <link href="https://fonts.googleapis.com/css2?family=Crimson+Pro:wght@400;600;700&family=DM+Sans:wght@400;500;700&display=swap" rel="stylesheet">
+</head>
+<body>
+    <!-- ==================== LOGIN/SIGNUP PAGE ==================== -->
+    <!-- This is the FIRST page users see. They must login or signup here -->
+    <section id="loginPage" class="login-page">
+        <div class="login-container">
+            <!-- Logo and welcome message -->
+            <div class="login-header">
+                <span class="login-logo">🚀</span>
+                <h1>QuickDeliver</h1>
+                <p>نظام التوصيل السريع في مصر</p>
+            </div>
+
+            <!-- Tab buttons to switch between Login and Signup -->
+            <div class="auth-tabs">
+                <button class="auth-tab active" onclick="showAuthTab('login')">تسجيل الدخول</button>
+                <button class="auth-tab" onclick="showAuthTab('signup')">إنشاء حساب</button>
+            </div>
+
+            <!-- LOGIN FORM -->
+            <form id="loginForm" class="auth-form" onsubmit="handleLogin(event)">
+                <h2>تسجيل الدخول</h2>
+                
+                <div class="form-group">
+                    <label for="loginEmail">البريد الإلكتروني:</label>
+                    <input type="email" id="loginEmail" required placeholder="example@email.com">
+                </div>
+                
+                <div class="form-group">
+                    <label for="loginPassword">كلمة المرور:</label>
+                    <input type="password" id="loginPassword" required placeholder="أدخل كلمة المرور">
+                </div>
+                
+                <button type="submit" class="btn btn-primary btn-block">دخول</button>
+                
+                <p class="auth-hint">ليس لديك حساب؟ <a href="#" onclick="showAuthTab('signup')">إنشاء حساب جديد</a></p>
+            </form>
+
+            <!-- SIGNUP FORM -->
+            <form id="signupForm" class="auth-form hidden" onsubmit="handleSignup(event)">
+                <h2>إنشاء حساب جديد</h2>
+                
+                <div class="form-group">
+                    <label for="signupName">الاسم الكامل:</label>
+                    <input type="text" id="signupName" required placeholder="مثال: أحمد حسن">
+                </div>
+                
+                <div class="form-group">
+                    <label for="signupEmail">البريد الإلكتروني:</label>
+                    <input type="email" id="signupEmail" required placeholder="example@email.com">
+                </div>
+                
+                <div class="form-group">
+                    <label for="signupPassword">كلمة المرور:</label>
+                    <input type="password" id="signupPassword" required placeholder="أدخل كلمة المرور">
+                </div>
+                
+                <div class="form-group">
+                    <label for="signupRole">اختر نوع الحساب:</label>
+                    <select id="signupRole" required>
+                        <option value="">-- اختر --</option>
+                        <option value="customer">عميل (Customer)</option>
+                        <option value="admin">مدير (Admin)</option>
+                        <option value="serviceOfferor">مقدم خدمة (Service Offeror)</option>
+                        <option value="courier">مندوب توصيل (Courier)</option>
+                    </select>
+                </div>
+                
+                <button type="submit" class="btn btn-primary btn-block">إنشاء الحساب</button>
+                
+                <p class="auth-hint">لديك حساب بالفعل؟ <a href="#" onclick="showAuthTab('login')">تسجيل الدخول</a></p>
+            </form>
+        </div>
+    </section>
+
+    <!-- ==================== MAIN APP (Hidden until login) ==================== -->
+    <div id="mainApp" class="hidden">
+        
+        <!-- ==================== HEADER SECTION ==================== -->
+        <header class="header">
+            <div class="header-content">
+                <!-- Logo and brand name -->
+                <div class="logo">
+                    <span class="logo-icon">🚀</span>
+                    <h1>QuickDeliver</h1>
+                </div>
+                
+                <!-- User info and logout -->
+                <div class="user-info">
+                    <span id="welcomeUser">مرحباً، أحمد</span>
+                    <span id="userRoleBadge" class="role-badge">عميل</span>
+                    <button onclick="logout()" class="btn btn-secondary btn-sm">تسجيل خروج</button>
+                </div>
+            </div>
+        </header>
+
+        <!-- ==================== MAIN CONTENT ==================== -->
+        <main class="main-content">
+            
+            <!-- ========== CUSTOMER SECTION ========== -->
+            <section id="customerSection" class="role-section hidden">
+                <h2 class="section-title">🛒 تسوق المنتجات</h2>
+                
+                <!-- Products by Category -->
+                <div class="products-container">
+                    <h3>المنتجات المتاحة</h3>
+                    
+                    <!-- Category Filter Buttons -->
+                    <div class="category-filter">
+                        <button class="category-btn active" onclick="filterByCategory('all')">الكل</button>
+                        <button class="category-btn" onclick="filterByCategory('Pizza')">🍕 بيتزا</button>
+                        <button class="category-btn" onclick="filterByCategory('Burgers')">🍔 برجر</button>
+                        <button class="category-btn" onclick="filterByCategory('Drinks')">🥤 مشروبات</button>
+                        <button class="category-btn" onclick="filterByCategory('Desserts')">🍰 حلويات</button>
+                    </div>
+                    
+                    <div id="productsList" class="products-grid">
+                        <!-- Products will be loaded here by JavaScript -->
+                    </div>
+                </div>
+
+                <!-- Shopping Cart -->
+                <div class="cart-container">
+                    <h3>🛍️ سلة التسوق</h3>
+                    <div id="cartItems" class="cart-items">
+                        <p class="empty-cart">السلة فارغة</p>
+                    </div>
+                    <div class="cart-footer">
+                        <div class="cart-total">
+                            <span>الإجمالي:</span>
+                            <span id="cartTotal">0 EGP</span>
+                        </div>
+                        <button onclick="showCheckout()" class="btn btn-primary">إتمام الطلب</button>
+                    </div>
+                </div>
+
+                <!-- Customer Orders -->
+                <div class="orders-container">
+                    <h3>📦 طلباتي</h3>
+                    <div id="customerOrders" class="orders-list">
+                        <p class="no-orders">لا توجد طلبات</p>
+                    </div>
+                </div>
+            </section>
+
+            <!-- ========== CHECKOUT MODAL ========== -->
+            <div id="checkoutModal" class="modal hidden">
+                <div class="modal-content">
+                    <span class="modal-close" onclick="closeCheckout()">&times;</span>
+                    <h2>💳 إتمام الدفع</h2>
+                    
+                    <!-- Order Summary -->
+                    <div class="checkout-summary">
+                        <h4>ملخص الطلب</h4>
+                        <div id="checkoutItems"></div>
+                        <div class="checkout-total">
+                            <strong>الإجمالي: <span id="checkoutTotal">0 EGP</span></strong>
+                        </div>
+                    </div>
+                    
+                    <!-- Payment Method Selection -->
+                    <div class="payment-methods">
+                        <h4>اختر طريقة الدفع:</h4>
+                        <div class="payment-options">
+                            <label class="payment-option">
+                                <input type="radio" name="paymentMethod" value="cash" checked onchange="togglePaymentForm()">
+                                <span class="payment-label">🚚 الدفع عند الاستلام</span>
+                            </label>
+                            <label class="payment-option">
+                                <input type="radio" name="paymentMethod" value="card" onchange="togglePaymentForm()">
+                                <span class="payment-label">💳 بطاقة ائتمان</span>
+                            </label>
+                        </div>
+                    </div>
+                    
+                    <!-- Credit Card Form (Hidden by default) -->
+                    <div id="creditCardForm" class="credit-card-form hidden">
+                        <h4>بيانات البطاقة</h4>
+                        <div class="form-group">
+                            <label>رقم البطاقة:</label>
+                            <input type="text" id="cardNumber" placeholder="1234 5678 9012 3456" maxlength="19">
+                        </div>
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label>تاريخ الانتهاء:</label>
+                                <input type="text" id="cardExpiry" placeholder="MM/YY" maxlength="5">
+                            </div>
+                            <div class="form-group">
+                                <label>CVV:</label>
+                                <input type="text" id="cardCvv" placeholder="123" maxlength="3">
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <button onclick="processPayment()" class="btn btn-primary btn-block">تأكيد الطلب</button>
+                </div>
+            </div>
+
+            <!-- ========== PAYMENT SUCCESS MODAL ========== -->
+            <div id="paymentSuccessModal" class="modal hidden">
+                <div class="modal-content success-modal">
+                    <div id="paymentSuccessIcon" class="success-icon">✅</div>
+                    <h2 id="paymentSuccessTitle">تم الدفع بنجاح!</h2>
+                    <p id="paymentSuccessMessage">شكراً لك! سيتم توصيل طلبك قريباً.</p>
+                    <button onclick="closePaymentSuccess()" class="btn btn-primary">حسناً</button>
+                </div>
+            </div>
+
+            <!-- ========== ADMIN SECTION ========== -->
+            <section id="adminSection" class="role-section hidden">
+                <h2 class="section-title">⚙️ لوحة التحكم</h2>
+                
+                <div class="admin-panel">
+                    <!-- Product Management Form -->
+                    <div class="form-container">
+                        <h3>إدارة المنتجات</h3>
+                        <form id="productForm" onsubmit="addProduct(event)">
+                            <div class="form-group">
+                                <label for="productName">اسم المنتج:</label>
+                                <input type="text" id="productName" required placeholder="مثال: بيتزا مارجريتا">
+                            </div>
+                            <div class="form-group">
+                                <label for="productPrice">السعر (EGP):</label>
+                                <input type="number" id="productPrice" required min="0" step="0.01" placeholder="0.00">
+                            </div>
+                            <div class="form-group">
+                                <label for="productCategory">التصنيف:</label>
+                                <select id="productCategory" required>
+                                    <option value="">اختر التصنيف</option>
+                                    <option value="Pizza">🍕 بيتزا</option>
+                                    <option value="Burgers">🍔 برجر</option>
+                                    <option value="Drinks">🥤 مشروبات</option>
+                                    <option value="Desserts">🍰 حلويات</option>
+                                    <option value="Other">📦 أخرى</option>
+                                </select>
+                            </div>
+                            <div class="form-buttons">
+                                <button type="submit" class="btn btn-primary">إضافة منتج</button>
+                                <button type="button" onclick="updateProduct()" class="btn btn-secondary">تحديث المحدد</button>
+                            </div>
+                        </form>
+                    </div>
+
+                    <!-- Pending Products (Need Approval) -->
+                    <div class="pending-products-container">
+                        <h3>⏳ منتجات تنتظر الموافقة</h3>
+                        <div id="pendingProductsList" class="admin-list">
+                            <!-- Pending products will appear here -->
+                        </div>
+                    </div>
+
+                    <!-- All Products -->
+                    <div class="admin-products">
+                        <h3>📦 جميع المنتجات</h3>
+                        <div id="adminProductsList" class="admin-list">
+                            <!-- Admin product list will appear here -->
+                        </div>
+                    </div>
+
+                    <!-- All Users (Admin Only) -->
+                    <div class="users-list-container" id="usersListContainer">
+                        <h3>👥 حسابات المستخدمين</h3>
+                        <div id="usersList" class="users-list">
+                            <!-- Users will be listed here -->
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- ========== SERVICE OFFEROR SECTION ========== -->
+            <section id="serviceOfferorSection" class="role-section hidden">
+                <h2 class="section-title">🏪 لوحة مقدم الخدمة</h2>
+                
+                <div class="service-panel">
+                    <!-- Form to add/manage products -->
+                    <div class="form-container">
+                        <h3>إضافة منتج جديد</h3>
+                        <form id="serviceProductForm" onsubmit="addServiceProduct(event)">
+                            <div class="form-group">
+                                <label for="serviceProductName">اسم المنتج:</label>
+                                <input type="text" id="serviceProductName" required placeholder="مثال: برجر لحم">
+                            </div>
+                            <div class="form-group">
+                                <label for="serviceProductPrice">السعر (EGP):</label>
+                                <input type="number" id="serviceProductPrice" required min="0" step="0.01" placeholder="0.00">
+                            </div>
+                            <div class="form-group">
+                                <label for="serviceProductCategory">التصنيف:</label>
+                                <select id="serviceProductCategory" required>
+                                    <option value="">اختر التصنيف</option>
+                                    <option value="Pizza">🍕 بيتزا</option>
+                                    <option value="Burgers">🍔 برجر</option>
+                                    <option value="Drinks">🥤 مشروبات</option>
+                                    <option value="Desserts">🍰 حلويات</option>
+                                    <option value="Other">📦 أخرى</option>
+                                </select>
+                            </div>
+                            <div class="form-buttons">
+                                <button type="submit" class="btn btn-primary">إضافة منتج</button>
+                                <button type="button" onclick="updateServiceProduct()" class="btn btn-secondary">تحديث المحدد</button>
+                            </div>
+                        </form>
+                        <p class="form-note">⚠️ ملاحظة: المنتجات الجديدة تحتاج موافقة المدير قبل ظهورها للعملاء</p>
+                    </div>
+
+                    <!-- Products owned by this service offeror -->
+                    <div class="service-products">
+                        <h3>منتجاتي</h3>
+                        <div id="serviceProductsList" class="admin-list">
+                            <!-- Service offeror's products will appear here -->
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- ========== COURIER SECTION ========== -->
+            <section id="courierSection" class="role-section hidden">
+                <h2 class="section-title">🚚 لوحة مندوب التوصيل</h2>
+                
+                <div class="courier-panel">
+                    <!-- Courier's delivery area settings -->
+                    <div class="courier-settings">
+                        <h3>إعدادات التوصيل</h3>
+                        <div class="form-group">
+                            <label for="deliveryArea">منطقة التوصيل:</label>
+                            <input type="text" id="deliveryArea" placeholder="مثال: المعادي، مصر الجديدة">
+                            <button onclick="updateDeliveryArea()" class="btn btn-secondary">تحديث المنطقة</button>
+                        </div>
+                        <p class="current-area">المنطقة الحالية: <span id="currentArea">وسط البلد</span></p>
+                    </div>
+
+                    <!-- Orders assigned to this courier -->
+                    <div class="assigned-orders">
+                        <h3>📋 الطلبات المسندة إليّ</h3>
+                        <div id="courierOrders" class="orders-list">
+                            <p class="no-orders">لا توجد طلبات مسندة</p>
+                        </div>
+                    </div>
+                </div>
+            </section>
+        </main>
+
+        <!-- ==================== FOOTER ==================== -->
+        <footer class="footer">
+            <div class="footer-content">
+                <p>QuickDeliver © 2025 - نظام التوصيل السريع في مصر</p>
+                <!-- Admin link to user accounts -->
+                <a href="#" id="userAccountsLink" class="footer-link hidden" onclick="scrollToUsers()">👥 حسابات المستخدمين</a>
+            </div>
+        </footer>
+    </div>
+
+    <!-- ==================== NOTIFICATION TOAST ==================== -->
+    <div id="toast" class="toast hidden">
+        <span id="toastMessage">رسالة</span>
+    </div>
+
+    <!-- Link to our JavaScript file -->
+    <script src="script.js"></script>
+</body>
+</html>
