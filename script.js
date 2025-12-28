@@ -1,46 +1,4 @@
 
-   
-   USER OBJECT STRUCTURE:
-   {
-       id: number,           // Unique identifier
-       name: string,         // Egyptian name
-       email: string,        // Login email
-       password: string,     // Login password
-       role: string          // "customer" | "admin" | "serviceOfferor" | "courier"
-   }
-   
-   Additional properties based on role:
-   - customer: cart[], orders[]
-   - courier: deliveryArea, assignedOrders[]
-   - serviceOfferor: ownedProducts[]
-   
-   PRODUCT OBJECT STRUCTURE:
-   {
-       id: number,
-       name: string,
-       price: number,        // In EGP (Egyptian Pounds)
-       category: string,     // Pizza, Burgers, Drinks, Desserts, Other
-       status: string,       // "pending" or "approved"
-       ownerId: number,      // ID of service offeror (null if admin added)
-       ownerName: string,    // Name shown on product
-       icon: string          // Emoji icon
-   }
-   
-   ORDER OBJECT STRUCTURE:
-   {
-       id: number,
-       customerId: number,
-       customerName: string,
-       items: array,
-       totalPrice: number,   // In EGP
-       status: string,       // pending, preparing, on-the-way, delivered, cancelled
-       paymentMethod: string,// "cash" or "card"
-       date: string,
-       assignedCourier: number
-   }
-   ============================================================================= */
-
-// Currently logged in user (null until login)
 let currentUser = null;
 
 // ===== USERS ARRAY =====
@@ -1798,5 +1756,4 @@ document.addEventListener('DOMContentLoaded', function() {
 
 
    
-
 
